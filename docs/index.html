@@ -55,9 +55,9 @@ h1 i{color:var(--ok)}
 .term .bar i{width:10px;height:10px;border-radius:50%;background:#3a372f}
 .term p{margin:0;white-space:pre}
 .term .m{color:var(--term-mute)}.term .g{color:var(--t-ok)}.term .y{color:var(--t-warn)}.term .r{color:var(--t-bad)}
-.term .line{opacity:0;animation:in .5s cubic-bezier(.16,1,.3,1) forwards}
+.term .line{animation:in .5s cubic-bezier(.16,1,.3,1) backwards}
 @keyframes in{from{opacity:0;filter:blur(3px);transform:translateY(3px)}to{opacity:1;filter:none;transform:none}}
-@media (prefers-reduced-motion:reduce){.term .line{animation:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.term .line{animation:none}}
 
 section{padding:88px 0;border-top:1px solid var(--line)}
 h2{font:400 clamp(36px,4.6vw,54px)/1.02 "Instrument Serif",serif;letter-spacing:-.01em;margin:0 0 16px;text-wrap:balance}
@@ -109,7 +109,7 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
   section{padding:64px 0}
   nav a:not(:last-child){display:none}
   .install{grid-template-columns:1fr}
-  .term{font-size:12px}
+  .term{font-size:11.5px;overflow-x:hidden}.term p{white-space:pre-wrap}
 }
 </style>
 </head>
