@@ -1,4 +1,8 @@
-# Vetted
+<p align="center"><img src="docs/icon.svg" width="88" alt="Vetted icon"></p>
+
+<h1 align="center">Vetted</h1>
+
+<p align="center"><a href="https://fyclamitydestiny.github.io/vetted/">Website</a> · <a href="https://github.com/FYClamityDestiny/vetted/issues/new?template=review-request.yml">Request a human review ($5)</a></p>
 
 **Find open-source tools and check them for malware before you install.** A Claude Code plugin.
 
@@ -17,7 +21,7 @@ You say what you need. Vetted searches eight sources, downloads the top candidat
 ## Install
 
 ```bash
-claude plugin marketplace add <your-github-user>/vetted
+claude plugin marketplace add FYClamityDestiny/vetted
 claude plugin install vetted
 ```
 
@@ -27,7 +31,10 @@ claude plugin install vetted
 |---|---|
 | `/vetted:find <what you need>` | Search → scan → compare → install after you say yes |
 | `/vetted:report <name>[, <name>…]` | Fact sheet: author, license, activity, contents, install, safety. Works on many at once. |
-| `/vetted:digest [topic]` | What's new in your interests, plus updates to things you installed. Good as a weekly scheduled task. |
+| `/vetted:digest [topic]` | What's new in your interests. Good as a weekly scheduled task. |
+| `/vetted:update [name\|all]` | Updates what you installed, scans only what changed, and warns about bad news: archived, deprecated, ownership change, shutting down, license change |
+| `/vetted:uninstall <name>` | Removes it and what it left behind (config, containers, volumes), then tells you which keys to revoke |
+| `/vetted:share [name]` | Look up or contribute shared ratings (opt-in, by pull request) |
 
 ## How the safety check works
 
@@ -41,6 +48,18 @@ claude plugin install vetted
 6. **Pinned install** of the exact commit, version, digest or asset ID that was scanned.
 
 **Honest limits:** Vetted lowers the risk; it can't rule it out. Well-hidden or time-delayed malware can get past any scanner. Install a real malware scanner for best results, and only install what you need.
+
+## Human review and badge
+
+For $5 per version, a person reviews your repo and you get the badge, linked to a public record in `ratings/`:
+
+![Vetted reviewed](docs/badge.svg)
+
+[Request a review](https://github.com/FYClamityDestiny/vetted/issues/new?template=review-request.yml). A review covers one version and is an opinion, not a guarantee.
+
+## Shared ratings
+
+Scan results anyone can read, in [`ratings/`](ratings/). They're hints: a shared rating can lower your local rating, never raise it.
 
 ## Recommended scanners
 

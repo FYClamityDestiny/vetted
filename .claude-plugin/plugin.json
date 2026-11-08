@@ -1,6 +1,6 @@
 {
   "name": "vetted",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Find, vet and install open-source tools from GitHub, Hugging Face, npm, PyPI, Docker Hub, VS Code/Open VSX, MCP registries and the Roblox Creator Store. Malware scan before anything is installed.",
   "author": { "name": "FYClamityDestiny" },
   "license": "MIT",

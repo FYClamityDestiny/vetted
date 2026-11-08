@@ -1,0 +1,19 @@
+name: Human review request ($5)
+description: Ask for a person to review one version of your repo or package.
+title: "Review: <owner/repo>@<version>"
+labels: [review-request]
+body:
+  - type: input
+    id: target
+    attributes: { label: Repo or package, description: "GitHub URL, or npm:/pypi:/docker:/vsx:/mcp:/roblox: name" }
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: Exact version, tag or commit }
+    validations: { required: true }
+  - type: textarea
+    id: notes
+    attributes: { label: Anything we should know, description: "What it does, risky parts you already know about" }
+  - type: markdown
+    attributes:
+      value: "Payment details are sent in a reply once we confirm we can review it. A review covers this version only and is a professional opinion, not a guarantee."

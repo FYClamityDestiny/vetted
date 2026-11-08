@@ -3,6 +3,7 @@
 A wrong "Clean" can get someone infected. When in doubt, the rating goes **down**, never up.
 
 ## Steps
+0. **Shared ratings.** Look up the item with the `share` skill. A shared rating is a hint that can only lower your rating, never raise it.
 1. **Download, don't run.** Use the download method in `sources.md` into a fresh empty temp folder. Nothing from the target runs: no install, no build, no tests, no `npx`, no `python setup.py`, no opening it in an IDE that runs tasks.
 2. **Scanner.** `bash "${CLAUDE_PLUGIN_ROOT}/scripts/scan.sh" <dir> <ecosystem>`. Exit codes: 0 clean, 1 warn, 2 block, 3 unverified (only pattern checks ran, no malware scanner).
 3. **Read what it flagged.** For every BLOCK or WARN line, open the file around that line and decide: real threat, or legitimate (a security tool or test suite naturally contains these patterns). Write one line per finding.
