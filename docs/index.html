@@ -6,12 +6,12 @@
 <title>Vetted</title>
 <meta name="description" content="A Claude Code plugin that finds open-source tools and checks them for malware before you install.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f4ef;--ink:#16140f;--mute:#6b6658;--line:#dcd7cb;--ok:#1f7a4d;--warn:#b26a00;--bad:#b3261e;--card:#fffdf8}
 @media (prefers-color-scheme:dark){:root{--bg:#121110;--ink:#efece4;--mute:#9a958a;--line:#2c2a26;--ok:#4cc38a;--warn:#f0a840;--bad:#ff6b5e;--card:#1a1917}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Schibsted Grotesk",system-ui,sans-serif}
 .wrap{max-width:980px;margin:0 auto;padding:0 20px}
 header{padding:28px 0;display:flex;justify-content:space-between;align-items:center}
 .logo{font:600 15px 'JetBrains Mono',monospace;letter-spacing:.02em}
@@ -38,9 +38,9 @@ ol.steps li::before{content:counter(s,decimal-leading-zero);font:600 14px 'JetBr
 ol.steps b{display:block}
 ol.steps span{color:var(--mute);font-size:15px}
 .ratings{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-.r{border-left:3px solid;padding:4px 0 4px 14px}
+.r{padding:4px 0}.r b::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:8px;vertical-align:middle}
 .r b{display:block}.r span{color:var(--mute);font-size:14px}
-.ok{border-color:var(--ok)}.warn{border-color:var(--warn)}.un{border-color:var(--mute)}.bad{border-color:var(--bad)}
+.ok b{color:var(--ok)}.warn b{color:var(--warn)}.un b{color:var(--mute)}.bad b{color:var(--bad)}
 .note{color:var(--mute);font-size:15px;max-width:680px}
 footer{padding:32px 0 48px;color:var(--mute);font-size:14px}
 footer a{color:inherit}
