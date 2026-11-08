@@ -1,0 +1,5 @@
+{
+  "name": "repo-scout",
+  "owner": { "name": "FYClamityDestiny" },
+  "plugins": [{ "name": "repo-scout", "source": "./", "description": "Find, vet and install GitHub repos and Hugging Face models." }]
+}

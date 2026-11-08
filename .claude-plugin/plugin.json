@@ -1,0 +1,7 @@
+{
+  "name": "repo-scout",
+  "version": "0.1.0",
+  "description": "Find, vet and install GitHub repos and Hugging Face models/datasets. Safety scan before anything is installed.",
+  "author": { "name": "FYClamityDestiny" },
+  "license": "MIT"
+}
