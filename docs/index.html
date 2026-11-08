@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vetted</title>
+<meta name="description" content="A Claude Code plugin that finds open-source tools and checks them for malware before you install.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4ef;--ink:#16140f;--mute:#6b6658;--line:#dcd7cb;--ok:#1f7a4d;--warn:#b26a00;--bad:#b3261e;--card:#fffdf8}
+@media (prefers-color-scheme:dark){:root{--bg:#121110;--ink:#efece4;--mute:#9a958a;--line:#2c2a26;--ok:#4cc38a;--warn:#f0a840;--bad:#ff6b5e;--card:#1a1917}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header{padding:28px 0;display:flex;justify-content:space-between;align-items:center}
+.logo{font:600 15px 'JetBrains Mono',monospace;letter-spacing:.02em}
+.logo b{color:var(--ok)}
+nav a{color:var(--mute);text-decoration:none;margin-left:20px;font-size:14px}
+nav a:hover{color:var(--ink)}
+.hero{padding:72px 0 56px;border-bottom:1px solid var(--line)}
+h1{font:400 clamp(44px,8vw,88px)/1 'Instrument Serif',serif;margin:0 0 20px;letter-spacing:-.01em}
+h1 em{color:var(--ok)}
+.lede{font-size:clamp(17px,2.2vw,20px);color:var(--mute);max-width:620px;margin:0 0 32px}
+pre{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font:14px/1.7 'JetBrains Mono',monospace;margin:0}
+pre .c{color:var(--mute)}
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+h2{font:400 36px/1.1 'Instrument Serif',serif;margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.card code{font:600 14px 'JetBrains Mono',monospace}
+.card p{margin:8px 0 0;color:var(--mute);font-size:15px}
+.sources{display:flex;flex-wrap:wrap;gap:8px}
+.sources span{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;background:var(--card)}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:14px}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:12px}
+ol.steps li::before{content:counter(s,decimal-leading-zero);font:600 14px 'JetBrains Mono',monospace;color:var(--mute);padding-top:2px}
+ol.steps b{display:block}
+ol.steps span{color:var(--mute);font-size:15px}
+.ratings{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.r{border-left:3px solid;padding:4px 0 4px 14px}
+.r b{display:block}.r span{color:var(--mute);font-size:14px}
+.ok{border-color:var(--ok)}.warn{border-color:var(--warn)}.un{border-color:var(--mute)}.bad{border-color:var(--bad)}
+.note{color:var(--mute);font-size:15px;max-width:680px}
+footer{padding:32px 0 48px;color:var(--mute);font-size:14px}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="logo">▣ <b>vetted</b></div><nav><a href="#how">How it works</a><a href="#install">Install</a><a href="https://github.com/">GitHub</a></nav></header>
+
+<div class="hero">
+<h1>Install the tool.<br><em>Not the trojan.</em></h1>
+<p class="lede">Vetted is a Claude Code plugin. Tell it what you need. It searches eight sources, scans the best matches for malware without running them, and installs the one you pick, pinned to the exact version it checked.</p>
+<pre><span class="c"># in Claude Code</span>
+/vetted:find a self-hosted newsletter tool with a Docker image</pre>
+</div>
+
+<section>
+<h2>Three commands</h2>
+<div class="grid">
+<div class="card"><code>/vetted:find</code><p>Describe what you need. Get 3–5 scanned options, a recommendation, and a pinned install after you say yes.</p></div>
+<div class="card"><code>/vetted:report</code><p>Fact sheet on one tool or many: author, license in plain words, activity, contents, install command, safety rating.</p></div>
+<div class="card"><code>/vetted:digest</code><p>What's new in your interests, plus updates to what you already installed. Run it weekly on a schedule.</p></div>
+</div>
+</section>
+
+<section>
+<h2>Eight sources</h2>
+<div class="sources"><span>GitHub</span><span>Hugging Face</span><span>npm</span><span>PyPI</span><span>Docker Hub</span><span>VS Code Marketplace</span><span>Open VSX</span><span>MCP Registry</span><span>Smithery</span><span>Glama</span><span>Roblox Creator Store</span></div>
+</section>
+
+<section id="how">
+<h2>How the check works</h2>
+<ol class="steps">
+<li><div><b>Download, never run</b><span>Packages are fetched as plain files. No install scripts, no builds, no Play mode.</span></div></li>
+<li><div><b>Pattern scan</b><span>Flags scripts downloaded and piped into a shell, hidden payloads, password and wallet theft, webhooks that send data out, reverse shells, miners, persistence, Roblox require(id) backdoors, and prompt injection in MCP tools.</span></div></li>
+<li><div><b>Real malware scanners</b><span>Windows Defender, ClamAV, GuardDog, osv-scanner and modelscan, whichever you have installed.</span></div></li>
+<li><div><b>Human-style review</b><span>Claude reads every flagged line and every entry point, then checks the author, ownership changes, typosquat names, and whether the package matches its source.</span></div></li>
+<li><div><b>Pinned install</b><span>Installs the exact commit, version, digest or asset ID that was scanned, never "latest".</span></div></li>
+</ol>
+</section>
+
+<section>
+<h2>Ratings</h2>
+<div class="ratings">
+<div class="r ok"><b>✅ Clean</b><span>A real scanner ran and the review found nothing.</span></div>
+<div class="r warn"><b>⚠️ Review</b><span>A real risk with a legitimate reason. Needs a second yes.</span></div>
+<div class="r un"><b>❔ Unverified</b><span>No scanner ran, or the code couldn't be fully read.</span></div>
+<div class="r bad"><b>⛔ Block</b><span>Steals data, hides code, or downloads and runs code. Never installs.</span></div>
+</div>
+<p class="note" style="margin-top:24px">Honest limits: Vetted lowers the risk; it can't rule it out. Well-hidden or time-delayed malware can get past any scanner. Install only what you need.</p>
+</section>
+
+<section id="install">
+<h2>Install</h2>
+<pre>claude plugin marketplace add &lt;user&gt;/vetted
+claude plugin install vetted</pre>
+</section>
+
+<footer>MIT licensed · made by FYClamityDestiny</footer>
+</div>
+</body>
+</html>

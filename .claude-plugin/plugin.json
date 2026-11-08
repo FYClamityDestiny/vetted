@@ -1,7 +1,8 @@
 {
-  "name": "repo-scout",
-  "version": "0.1.0",
-  "description": "Find, vet and install GitHub repos and Hugging Face models/datasets. Safety scan before anything is installed.",
+  "name": "vetted",
+  "version": "0.2.0",
+  "description": "Find, vet and install open-source tools from GitHub, Hugging Face, npm, PyPI, Docker Hub, VS Code/Open VSX, MCP registries and the Roblox Creator Store. Malware scan before anything is installed.",
   "author": { "name": "FYClamityDestiny" },
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": ["security", "supply-chain", "github", "npm", "pypi", "docker", "mcp", "roblox"]
 }
