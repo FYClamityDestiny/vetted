@@ -10,12 +10,16 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const { PR, AUTHOR, HEAD_SHA, HEAD_REPO, OWNER, REPO } = process.env;
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const gh = (...a) => execFileSync('gh', a, { encoding: 'utf8', maxBuffer: 1 << 26 });
 const ghJson = (...a) => JSON.parse(gh('api', ...a));
 const SEV = { clean: 0, unverified: 1, review: 2, block: 3 };
 const problems = [], notes = [];
 const isOwner = AUTHOR.toLowerCase() === OWNER.toLowerCase();
+
+process.on('uncaughtException', e => { try { gh('pr', 'comment', PR, '-R', REPO, '--body', `**Rating check crashed**, so a maintainer needs to look at this one.
+
+\`${String(e.message).slice(0, 300)}\``); } catch {} process.exit(1); });
 
 // 1. Who is submitting
 const user = ghJson(`users/${AUTHOR}`);
