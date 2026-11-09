@@ -1,6 +1,6 @@
 {
   "name": "vetted",
   "description": "Vetted: find open-source tools and scan them for malware before you install.",
-  "owner": { "name": "FYClamityDestiny", "url": "https://farhandev.net" },
+  "owner": { "name": "FYClamityDestiny", "url": "https://farhandev.net", "email": "farhandev.business@gmail.com" },
   "plugins": [{ "name": "vetted", "source": "./", "description": "Find, vet and install tools from GitHub, Hugging Face, npm, PyPI, Docker Hub, VS Code/Open VSX, MCP registries and the Roblox Creator Store." }]
 }

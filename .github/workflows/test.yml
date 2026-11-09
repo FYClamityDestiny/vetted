@@ -1,0 +1,25 @@
+name: tests
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Scanner catches planted malware
+        run: bash tests/test-scan.sh
+      - name: Scripts parse
+        run: |
+          node --check scripts/vetted.mjs
+          node --check scripts/ci/build-index.mjs
+          node --check scripts/ci/check-ratings.mjs
+          for f in scripts/*.sh; do bash -n "$f"; done
+      - name: Manifests are valid JSON
+        run: for f in .claude-plugin/*.json; do node -e "JSON.parse(require('fs').readFileSync('$f'))"; done
+      - name: Data helper finds a known-malicious package
+        run: node scripts/vetted.mjs intel npm flatmap-stream 0.1.1 | grep -q 'MAL-'

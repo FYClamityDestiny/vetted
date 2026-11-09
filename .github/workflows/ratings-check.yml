@@ -1,0 +1,34 @@
+# Checks every rating pull request. Runs the BASE branch's scripts (pull_request_target),
+# so a pull request can't change the checker that judges it. PR files are only read as data.
+name: rating check
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths: ['ratings/**']
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+concurrency:
+  group: rating-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Install ClamAV (real malware scanner for the re-scan)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq clamav >/dev/null && sudo systemctl stop clamav-freshclam || true; sudo freshclam --quiet || true
+      - name: Check author, limits and every rating
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.repository }}
+        run: node scripts/ci/check-ratings.mjs

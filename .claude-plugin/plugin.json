@@ -2,7 +2,7 @@
   "name": "vetted",
   "version": "0.4.0",
   "description": "Find, vet and install open-source tools from GitHub, Hugging Face, npm, PyPI, Docker Hub, VS Code/Open VSX, MCP registries and the Roblox Creator Store. Malware scan before anything is installed.",
-  "author": { "name": "FYClamityDestiny", "url": "https://farhandev.net" },
+  "author": { "name": "FYClamityDestiny", "url": "https://farhandev.net", "email": "farhandev.business@gmail.com" },
   "license": "MIT",
   "keywords": ["security", "supply-chain", "github", "npm", "pypi", "docker", "mcp", "roblox"]
 }

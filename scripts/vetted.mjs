@@ -5,10 +5,11 @@
 //   node vetted.mjs search <source> <query> [limit]   source: github|npm|hf|docker|openvsx|mcp
 //   node vetted.mjs meta   <source> <name>            pinned version, download URL, owner, flags
 //   node vetted.mjs intel  <source> <name> <version>  malware lists, vulns, full dependency tree, quality grade
+//   node vetted.mjs fetch  <github|npm|pypi> <name> <version|commit> <dir>   download pinned files, verify checksum, extract. Runs nothing.
 //   node vetted.mjs hashes <dir>                      sha256 of binaries/archives (+ VirusTotal if VT_API_KEY set)
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync, statSync, readdirSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync, statSync, readdirSync, existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, extname } from 'node:path';
 
@@ -24,7 +25,7 @@ if (!ghToken) try { ghToken = execFileSync('gh', ['auth', 'token'], { encoding: 
 async function get(url, opts = {}) {
   const key = createHash('sha1').update(url + (opts.body || '')).digest('hex');
   const file = join(CACHE, key + '.json');
-  try { if (Date.now() - statSync(file).mtimeMs < DAY) return JSON.parse(readFileSync(file, 'utf8')); } catch {}
+  try { if (Date.now() - statSync(file).mtimeMs < (opts.ttl ?? DAY)) return JSON.parse(readFileSync(file, 'utf8')); } catch {}
   const headers = { 'user-agent': 'vetted-plugin', accept: 'application/json', ...(opts.headers || {}) };
   if (url.startsWith('https://api.github.com') && ghToken) headers.authorization = `Bearer ${ghToken}`;
   const res = await fetch(url, { ...opts, headers });
@@ -122,7 +123,8 @@ async function intel(source, name, version) {
     const queries = (nodes.length ? nodes : [{ name, version }]).map(k => ({ package: { name: k.name, ecosystem: eco }, version: k.version }));
     const malicious = [], vulns = [];
     for (let i = 0; i < queries.length; i += 500) {
-      const r = await get('https://api.osv.dev/v1/querybatch', { method: 'POST', body: JSON.stringify({ queries: queries.slice(i, i + 500) }), headers: { 'content-type': 'application/json' } });
+      // malware lists change fast: cache 1h, not 24h
+      const r = await get('https://api.osv.dev/v1/querybatch', { ttl: 36e5, method: 'POST', body: JSON.stringify({ queries: queries.slice(i, i + 500) }), headers: { 'content-type': 'application/json' } });
       r.results.forEach((res, j) => (res.vulns || []).forEach(v => (v.id.startsWith('MAL-') ? malicious : vulns).push(`${queries[i + j].package.name}@${queries[i + j].version}: ${v.id}`)));
     }
     out.known_malicious = malicious;            // any entry here = BLOCK
@@ -150,18 +152,69 @@ async function hashes(dir) {
   const found = [];
   const walk = d => readdirSync(d, { withFileTypes: true }).forEach(e => { const p = join(d, e.name); if (e.isDirectory()) { if (e.name !== '.git') walk(p); } else if (BIN.has(extname(e.name).toLowerCase())) found.push(p); });
   walk(dir);
+  // VirusTotal free tier: 4 lookups/min, 500/day. Results cached 7 days; at most VT_MAX (default 4) live lookups per run,
+  // spaced 15s apart, biggest files first (installers and native modules matter most).
+  const max = +(process.env.VT_MAX || 4);
+  found.sort((x, y) => statSync(y).size - statSync(x).size);
   const out = [];
+  let live = 0, skipped = 0;
   for (const f of found.slice(0, 50)) {
     const sha = createHash('sha256').update(readFileSync(f)).digest('hex');
     const row = { file: f.slice(dir.length + 1), sha256: sha };
     if (process.env.VT_API_KEY) {
-      const r = await get(`https://www.virustotal.com/api/v3/files/${sha}`, { headers: { 'x-apikey': process.env.VT_API_KEY } }).catch(() => null);
+      const url = `https://www.virustotal.com/api/v3/files/${sha}`;
+      const cached = existsSync(join(CACHE, createHash('sha1').update(url).digest('hex') + '.json'));
+      if (!cached && live >= max) { skipped++; row.virustotal = 'not checked (quota limit this run)'; out.push(row); continue; }
+      if (!cached && live++) await new Promise(r => setTimeout(r, 15000));
+      const r = await get(url, { ttl: 7 * DAY, headers: { 'x-apikey': process.env.VT_API_KEY } }).catch(e => (/429/.test(e.message) ? 'quota' : null));
       const s = r?.data?.attributes?.last_analysis_stats;
-      row.virustotal = s ? `${s.malicious} malicious / ${s.malicious + s.undetected + s.harmless} engines` : 'unknown to VirusTotal (new or private file)';
+      row.virustotal = r === 'quota' ? 'not checked (VirusTotal quota reached)' : s ? `${s.malicious} malicious / ${s.malicious + s.undetected + s.harmless} engines` : 'unknown to VirusTotal (new or private file)';
     }
     out.push(row);
   }
-  return { binaries: out.length, files: out, virustotal: process.env.VT_API_KEY ? 'checked' : 'skipped (set VT_API_KEY, free account; only hashes are sent)' };
+  return { binaries: out.length, files: out, virustotal: process.env.VT_API_KEY ? `checked ${live} live${skipped ? `, ${skipped} skipped for quota (raise VT_MAX if your plan allows)` : ''}` : 'skipped (set VT_API_KEY, free account; only hashes are sent)' };
+}
+
+
+// ---------- fetch (download + verify + extract, never runs anything) ----------
+async function download(url, file) {
+  const res = await fetch(url, { headers: { 'user-agent': 'vetted-plugin' } });
+  if (!res.ok) throw new Error(`${res.status} ${url}`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  writeFileSync(file, buf);
+  return buf;
+}
+function extract(file, dir) {
+  mkdirSync(dir, { recursive: true });
+  // Windows: built-in bsdtar handles .tgz and .zip/.whl. Linux/macOS: tar for archives, unzip for zips.
+  if (process.platform === 'win32') return execFileSync(join(process.env.SystemRoot || 'C:\Windows', 'System32', 'tar.exe'), ['-xf', file, '-C', dir], { stdio: 'ignore' });
+  const zip = /[.](whl|zip|vsix)$/.test(file);
+  execFileSync(zip ? 'unzip' : 'tar', zip ? ['-q', '-o', file, '-d', dir] : ['-xzf', file, '-C', dir], { stdio: 'ignore' });
+}
+async function fetchPinned(source, name, version, dir) {
+  mkdirSync(dir, { recursive: true });
+  if (source === 'github') {
+    if (!/^[0-9a-f]{40}$/.test(version)) throw new Error('github needs a full 40-character commit sha');
+    const f = join(dir, 'src.tgz'); await download(`https://codeload.github.com/${name}/tar.gz/${version}`, f); extract(f, join(dir, 'src'));
+    return { dir: join(dir, 'src'), verified: 'commit sha pins the content' };
+  }
+  if (source === 'npm') {
+    const m = await get(`https://registry.npmjs.org/${name.replace('/', '%2F')}/${version}`, { ttl: 0 });
+    if (!m) throw new Error('version not found');
+    const f = join(dir, 'pkg.tgz'); const buf = await download(m.dist.tarball, f);
+    const [alg, want] = m.dist.integrity.split('-');
+    if (createHash(alg).update(buf).digest('base64') !== want) throw new Error('integrity mismatch: the download does not match the registry checksum');
+    extract(f, join(dir, 'src')); return { dir: join(dir, 'src'), verified: m.dist.integrity };
+  }
+  if (source === 'pypi') {
+    const p = await get(`https://pypi.org/pypi/${name}/${version}/json`, { ttl: 0 });
+    if (!p) throw new Error('version not found');
+    const u = p.urls.find(x => x.packagetype === 'bdist_wheel') || p.urls.find(x => x.packagetype === 'sdist');
+    const f = join(dir, u.filename); const buf = await download(u.url, f);
+    if (createHash('sha256').update(buf).digest('hex') !== u.digests.sha256) throw new Error('sha256 mismatch');
+    extract(f, join(dir, 'src')); return { dir: join(dir, 'src'), verified: 'sha256 ' + u.digests.sha256 };
+  }
+  throw new Error(`fetch supports github, npm, pypi (not ${source})`);
 }
 
 // ---------- main ----------
@@ -173,6 +226,7 @@ try {
   else if (cmd === 'meta' && meta[src]) r = await meta[src](a);
   else if (cmd === 'intel') r = await intel(src, a, b);
   else if (cmd === 'hashes') r = await hashes(src);
+  else if (cmd === 'fetch') r = await fetchPinned(src, a, b, process.argv[6]);
   else { console.error('usage: vetted.mjs search|meta <github|npm|pypi|hf|docker|openvsx|mcp> <q>  |  intel <source> <name> <version>  |  hashes <dir>'); process.exit(64); }
   console.log(JSON.stringify(r ?? { error: 'not found' }, null, 1));
 } catch (e) { console.log(JSON.stringify({ error: e.message })); process.exit(1); }

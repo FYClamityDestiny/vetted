@@ -96,4 +96,4 @@ Scanning Vetted itself flags its own scanner and tests, because they contain the
 ## License
 MIT
 
-Built by [FYClamityDestiny](https://github.com/FYClamityDestiny) · [farhandev.net](https://farhandev.net)
+Built by [FYClamityDestiny](https://github.com/FYClamityDestiny). Website: [farhandev.net](https://farhandev.net). Contact: [farhandev.business@gmail.com](mailto:farhandev.business@gmail.com)
