@@ -61,18 +61,24 @@ if (!problems.length) for (const { file, source, name, version, r } of ratings) 
   if (!['github', 'npm', 'pypi'].includes(source)) { notes.push(`${file}: ${source} can't be re-scanned automatically yet. The maintainer will review it.`); continue; }
   const dir = mkdtempSync(join(tmpdir(), 'vt-'));
   try {
-    const pin = source === 'github' ? r.commit : version;
-    const got = JSON.parse(execFileSync('node', [H, 'fetch', source, name, pin, dir], { encoding: 'utf8' }));
-    if (got.error) { problems.push(`${file}: couldn't download that exact version (${got.error}).`); continue; }
-    let code = 0;
-    try { execFileSync('bash', [SCAN, got.dir, source], { stdio: 'pipe' }); } catch (e) { code = e.status; }
-    let bot = { 0: 'clean', 1: 'review', 2: 'block', 3: 'unverified' }[code] ?? 'unverified';
+    let bot = 'unverified';
+    // Known-malware lists first: a removed package can't be downloaded, but it's still malware.
     if (source !== 'github') {
       const intel = JSON.parse(execFileSync('node', [H, 'intel', source, name, version], { encoding: 'utf8' }));
       if (intel.known_malicious?.length) bot = 'block';
     }
-    if (SEV[r.rating] < SEV[bot]) problems.push(`${file}: you rated it "${r.rating}" but the bot's own scan says "${bot}". Ratings can't be less cautious than the scan.`);
-    else notes.push(`${file}: the bot's scan says "${bot}", consistent with your "${r.rating}".`);
+    if (bot !== 'block') {
+      const pin = source === 'github' ? r.commit : version;
+      let got;
+      try { got = JSON.parse(execFileSync('node', [H, 'fetch', source, name, pin, dir], { encoding: 'utf8' })); }
+      catch (e) { got = { error: (e.stdout && JSON.parse(e.stdout).error) || 'download failed' }; }
+      if (got.error) { problems.push(`${file}: couldn't download that exact version (${got.error}).`); continue; }
+      let code = 0;
+      try { execFileSync('bash', [SCAN, got.dir, source], { stdio: 'pipe' }); } catch (e) { code = e.status; }
+      bot = { 0: 'clean', 1: 'review', 2: 'block', 3: 'unverified' }[code] ?? 'unverified';
+    }
+    if (SEV[r.rating] < SEV[bot]) problems.push(`${file}: you rated it "${r.rating}" but the bot's own check says "${bot}". Ratings can't be less cautious than the bot.`);
+    else notes.push(`${file}: the bot's check says "${bot}", consistent with your "${r.rating}".`);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
 
