@@ -186,16 +186,15 @@ async function download(url, file) {
 }
 function list(file) {
   const win = process.platform === 'win32', zip = /[.](whl|zip|vsix)$/.test(file);
-  const tar = win ? join(process.env.SystemRoot || 'C:\Windows', 'System32', 'tar.exe') : 'tar';
+  const tar = win ? join(process.env.SystemRoot || 'C:/Windows', 'System32', 'tar.exe') : 'tar';
   const out = !win && zip ? execFileSync('unzip', ['-Z1', file], { encoding: 'utf8' }) : execFileSync(tar, ['-tf', file], { encoding: 'utf8' });
-  return out.split(/?
-/).filter(l => l && !l.endsWith('/')).length;
+  return out.split(/\r?\n/).filter(l => l && !l.endsWith('/')).length;
 }
 function countFiles(d) { return readdirSync(d, { withFileTypes: true }).reduce((n, e) => n + (e.isDirectory() ? countFiles(join(d, e.name)) : 1), 0); }
 function extract(file, dir) {
   mkdirSync(dir, { recursive: true });
   // Windows: built-in bsdtar handles .tgz and .zip/.whl. Linux/macOS: tar for archives, unzip for zips.
-  if (process.platform === 'win32') execFileSync(join(process.env.SystemRoot || 'C:\Windows', 'System32', 'tar.exe'), ['-xf', file, '-C', dir], { stdio: 'ignore' });
+  if (process.platform === 'win32') execFileSync(join(process.env.SystemRoot || 'C:/Windows', 'System32', 'tar.exe'), ['-xf', file, '-C', dir], { stdio: 'ignore' });
   else { const zip = /[.](whl|zip|vsix)$/.test(file); execFileSync(zip ? 'unzip' : 'tar', zip ? ['-q', '-o', file, '-d', dir] : ['-xzf', file, '-C', dir], { stdio: 'ignore' }); }
   // Real-time antivirus can silently delete a malicious file during extraction. A scan of what's left would look clean.
   const want = list(file), got = countFiles(dir);
