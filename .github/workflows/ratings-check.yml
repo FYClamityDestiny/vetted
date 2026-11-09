@@ -22,6 +22,8 @@ jobs:
         with: { node-version: 22 }
       - name: Install ClamAV (real malware scanner for the re-scan)
         run: sudo apt-get update -qq && sudo apt-get install -y -qq clamav >/dev/null && sudo systemctl stop clamav-freshclam || true; sudo freshclam --quiet || true
+      - name: Install GuardDog (malicious-package heuristics for npm and PyPI)
+        run: pipx install guarddog || true
       - name: Check author, limits and every rating
         env:
           GH_TOKEN: ${{ github.token }}

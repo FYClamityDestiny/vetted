@@ -82,9 +82,15 @@ if [ "${VETTED_NO_TOOLS:-0}" != 1 ]; then
     elif echo "$out" | grep -qiE "threat|found [1-9]"; then ran=1; echo "[BLOCK] Windows Defender:"; echo "$out" | tail -8 | sed 's/^/    /'; block=1
     else echo "[--] Windows Defender could not scan (turned off, or another antivirus is active)"; fi
   fi
-  if command -v clamscan >/dev/null; then
-    ran=1
-    if clamscan -r -i --no-summary "$dir"; then echo "[ok] ClamAV: clean"; else echo "[BLOCK] ClamAV found something"; block=1; fi
+  clam=$(command -v clamscan || ls "/c/Program Files/ClamAV/clamscan.exe" 2>/dev/null)
+  db=${VETTED_CLAMDB:-$HOME/.cache/vetted/clamdb}
+  if [ -n "$clam" ]; then
+    dbarg=(); [ -d "$db" ] && dbarg=(--database="$(cygpath -w "$db" 2>/dev/null || echo "$db")")
+    target=$(cygpath -w "$dir" 2>/dev/null || echo "$dir")
+    out=$("$clam" "${dbarg[@]}" -r -i --no-summary "$target" 2>&1); rc=$?
+    if [ $rc = 0 ]; then ran=1; echo "[ok] ClamAV: clean"
+    elif [ $rc = 1 ]; then ran=1; echo "[BLOCK] ClamAV found malware:"; echo "$out" | head -5 | sed 's/^/    /'; block=1
+    else echo "[--] ClamAV could not scan (no virus database? run freshclam)"; fi
   fi
   if command -v guarddog >/dev/null && { [ "$eco" = npm ] || [ "$eco" = pypi ]; }; then
     ran=1; out=$(guarddog "$eco" scan "$dir" 2>&1)
