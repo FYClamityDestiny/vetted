@@ -21,3 +21,6 @@ Table: Name | Source | What it does | Adoption (stars/downloads) | License | Rat
 
 ## 5. Install (only after the user says yes to a specific one)
 Show the exact pinned command first, then run it. ⛔ never installs. ⚠️ and ❔ need a second yes after the user reads the warning. After installing, record it in `~/.claude/vetted-log.md`: `- <source>:<name>@<pinned version> — <rating> — installed <date> — remove with: <command>`.
+
+## 6. After they've used it
+Once the user has used the tool for a while (or at the end of this session if it's installed), suggest once: "Worked fine, or did something look off? `/vetted:share` adds your result to the public ratings so the next person is protected too." Never share without their yes.

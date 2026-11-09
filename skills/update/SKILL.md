@@ -25,3 +25,6 @@ Download the old and new versions side by side (pinned, from `sources.md`). Diff
 
 ## 5. Report and apply
 Table: Name | Installed → Latest | Changes (one line) | Bad news | Rating. Then ask which to update. Apply only the approved ones, each pinned to the scanned version, and update `vetted-log.md` (new version, rating, date). Never auto-update a ⛔, and don't let an update quietly lower a rating without saying so.
+
+## 6. Share
+If an update was rated or showed bad news, suggest once: "`/vetted:share` would warn everyone else using this." Never share without their yes.
