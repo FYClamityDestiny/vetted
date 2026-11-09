@@ -7,7 +7,7 @@ set -u
 dir=${1:?usage: scan.sh <dir> [ecosystem]}
 eco=${2:-github}
 [ -d "$dir" ] || { echo "not a directory: $dir"; exit 2; }
-block=0 warn=0 ran=0
+block=0 warn=0 ran=0 unreadable=0
 
 hit() { # level label regex
   local out
@@ -54,6 +54,23 @@ case $eco in
     hit WARN "web requests or purchase/teleport prompts" 'HttpService|PromptPurchase|PromptProductPurchase|PromptGamePassPurchase|TeleportService'
     hit WARN "obfuscated strings" 'string\.char[[:space:]]*\(|(\\[0-9]{2,3}){20,}|string\.reverse' ;;
 esac
+# Delayed payloads: code that fetches something and runs it later, long timers, date triggers
+hit WARN "fetches code then runs it (possible delayed payload)" '(fetch|axios|https?\.get|requests\.get|urlopen|HttpGet)[^;]{0,200}(eval|Function\(|exec|spawn|writeFile[^;]*\.(js|sh|ps1|exe|py))'
+hit WARN "long timer or date trigger" 'set(Timeout|Interval)\([^)]*[0-9]{8,}|Date\.now\(\)[[:space:]]*>[[:space:]]*[0-9]{12}|new Date\([^)]*\)[[:space:]]*[<>]|datetime\.now\(\)[[:space:]]*[<>]'
+# Scrambled code: very long lines mean minified/packed code that pattern checks can't read reliably
+mini=$(find "$dir" -path '*/.git' -prune -o -type f \( -name '*.js' -o -name '*.mjs' -o -name '*.cjs' -o -name '*.py' -o -name '*.lua' -o -name '*.ps1' \) -print 2>/dev/null | while read -r f; do awk 'length > 3000 {print FILENAME; exit}' "$f"; done | head -5)
+if [ -n "$mini" ]; then echo "[WARN] minified or packed code (can't be fully read; rating can't be Clean without deobfuscating)"; echo "$mini" | sed 's/^/    /'; warn=1; unreadable=1; fi
+
+# Capability profile: what this code CAN do. update compares it between versions; a new capability is the classic hijack sign.
+cap() { grep -rIEiq --exclude-dir=.git -e "$2" "$dir" 2>/dev/null && caps="$caps $1"; }
+caps=""
+cap network 'fetch\(|axios|https?\.(get|request)|XMLHttpRequest|WebSocket|requests\.|urllib|socket\.|HttpService|net\.Dial|reqwest'
+cap exec 'child_process|subprocess|os\.system|exec\(|spawn\(|Start-Process|Runtime\.getRuntime'
+cap filesystem 'fs\.(write|unlink|rm)|writeFile|open\([^)]*["'"'"']w|shutil\.(rmtree|copy)|Remove-Item'
+cap env 'process\.env|os\.environ|getenv|\$env:'
+cap install-hook '"(pre|post)?install"[[:space:]]*:|cmdclass|setup_requires'
+cap dynamic-code 'eval\(|new Function|loadstring|exec\(compile'
+echo "CAPS:${caps:- none}"
 
 echo "== malware scanners =="
 if [ "${VETTED_NO_TOOLS:-0}" != 1 ]; then
@@ -87,4 +104,5 @@ echo "== result =="
 if   [ $block = 1 ]; then echo "BLOCK"; exit 2
 elif [ $warn = 1 ];  then [ $ran = 1 ] && echo "WARN" || echo "WARN (and UNVERIFIED: no malware scanner ran)"; exit 1
 elif [ $ran = 0 ];   then echo "UNVERIFIED"; exit 3
+elif [ $unreadable = 1 ]; then echo "UNVERIFIED (unreadable code)"; exit 3
 else echo "CLEAN"; exit 0; fi

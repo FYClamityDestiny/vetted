@@ -12,11 +12,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* Hallmark · redesign: polish · genre: modern-minimal · theme: own world (user named: keep paper, ink, green; Instrument Serif + Schibsted Grotesk) · posture: restrained · nav: wordmark + three links · footer: license line + farhandev.net · hero: split, headline left, scan readout right · signature: the scan readout comparing a real tool, a risky one and a fake */
+/* critique: content-heavy security page; trust comes from saying exactly what is and is not checked */
 :root{
   --bg:#f4f1ea;--paper:#fbf9f4;--ink:#16140f;--ink2:#3d392f;--mute:#6b6658;--line:#dcd6c8;
   --ok:#1a6e45;--warn:#9a5b00;--bad:#a8231b;--un:#5f5a4e;
   --term:#16140f;--term-ink:#e9e5da;--term-mute:#8f8a7d;--t-ok:#5fd19b;--t-warn:#f2b35a;--t-bad:#ff7a6e;
-  --sel:#cfe9da;
+  --sel:#cfe9da;--mono:"JetBrains Mono",ui-monospace,monospace;--shadow-a:var(--shadow-a);--shadow-b:var(--shadow-b);
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#11100e;--paper:#191815;--ink:#efece4;--ink2:#cfcabd;--mute:#9a958a;--line:#2d2b26;
@@ -24,46 +26,45 @@
   --term:#0b0a09;--sel:#21473a;
 }}
 *{box-sizing:border-box}
+html,body{overflow-x:clip}
 html{scroll-behavior:smooth;scrollbar-color:var(--line) var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Schibsted Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 ::selection{background:var(--sel);color:var(--ink)}
 a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
 :focus-visible{outline:2px solid var(--ok);outline-offset:3px;border-radius:4px}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-code,pre,.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+code,pre,.mono{font-family:var(--mono)}
 
-header{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none;letter-spacing:-.01em}
+header{display:flex;justify-content:space-between;align-items:center;padding:24px 0}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:18px;text-decoration:none;letter-spacing:-.01em}
 .brand img{width:30px;height:30px}
-nav{display:flex;gap:22px;font-size:15px}
+nav{display:flex;gap:24px;font-size:15px}
 nav a{color:var(--mute);text-decoration:none}
 nav a:hover{color:var(--ink)}
 
-.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center;padding:64px 0 88px}
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:56px;align-items:center;padding:64px 0 88px}
 h1{font:400 clamp(48px,7.4vw,92px)/.95 "Instrument Serif",serif;letter-spacing:-.02em;margin:0 0 24px;text-wrap:balance}
-h1 i{color:var(--ok)}
 .lede{font-size:clamp(17px,1.9vw,20px);color:var(--ink2);max-width:34ch;margin:0 0 32px}
 .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;text-decoration:none;font-size:16px;transition:transform .2s cubic-bezier(.2,.8,.2,1),background .2s}
 .btn.primary{background:var(--ink);color:var(--bg)}
 .btn.primary:hover{transform:translateY(-1px)}
+.btn:active{transform:scale(.98)}
 .btn.ghost{border:1px solid var(--line);color:var(--ink)}
 .btn.ghost:hover{background:var(--paper)}
 
-.term{background:var(--term);color:var(--term-ink);border-radius:14px;padding:18px 20px 22px;font:13.5px/1.75 "JetBrains Mono",monospace;box-shadow:0 30px 60px -30px rgba(22,20,15,.55),0 2px 6px rgba(22,20,15,.12);overflow-x:auto}
-.term .bar{display:flex;gap:6px;margin-bottom:14px}
-.term .bar i{width:10px;height:10px;border-radius:50%;background:#3a372f}
+.term{background:var(--term);color:var(--term-ink);border-radius:14px;padding:16px 20px 24px;font:13.5px/1.75 var(--mono);box-shadow:0 30px 60px -30px var(--shadow-a),0 2px 6px var(--shadow-b);overflow-x:auto}
 .term p{margin:0;white-space:pre-wrap}
-.sources span{display:inline-flex;align-items:center;gap:9px}
+.sources span{display:inline-flex;align-items:center;gap:8px}
 .ic{width:17px;height:17px;flex:none;background:currentColor;-webkit-mask:var(--i) center/contain no-repeat;mask:var(--i) center/contain no-repeat}
 .sources svg{width:17px;height:17px;flex:none}
-.cancant{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.cancant h3{font:600 17px "Schibsted Grotesk",sans-serif;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+.cancant{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.cancant h3{font:600 17px "Schibsted Grotesk",sans-serif;margin:0 0 16px;display:flex;align-items:center;gap:12px}
 .cancant ul{list-style:none;margin:0;padding:0}
 .cancant li{padding:12px 0;border-top:1px solid var(--line);color:var(--ink2);font-size:15.5px}
 .cancant li b{color:var(--ink);font-weight:600}
 .cancant li span{display:block;color:var(--mute);font-size:14.5px;margin-top:2px}
-@media (max-width:860px){.cancant{grid-template-columns:1fr}}
+@media (max-width:860px){.cancant{grid-template-columns:minmax(0,1fr)}}
 .term .m{color:var(--term-mute)}.term .g{color:var(--t-ok)}.term .y{color:var(--t-warn)}.term .r{color:var(--t-bad)}
 .term .line{animation:in .5s cubic-bezier(.16,1,.3,1) backwards}
 @keyframes in{from{opacity:0;filter:blur(3px);transform:translateY(3px)}to{opacity:1;filter:none;transform:none}}
@@ -74,51 +75,51 @@ h2{font:400 clamp(36px,4.6vw,54px)/1.02 "Instrument Serif",serif;letter-spacing:
 .sub{color:var(--mute);max-width:58ch;margin:0 0 40px}
 
 .cmds{display:grid;gap:0;border-top:1px solid var(--line)}
-.cmd{display:grid;grid-template-columns:240px 1fr;gap:24px;padding:22px 0;border-bottom:1px solid var(--line)}
+.cmd{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;padding:24px 0;border-bottom:1px solid var(--line)}
 .cmd code{font-weight:600;font-size:15px}
 .cmd p{margin:0;color:var(--ink2)}
 
-.sources{display:flex;flex-wrap:wrap;gap:10px}
-.sources span{border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:15px;background:var(--paper)}
+.sources{display:flex;flex-wrap:wrap;gap:12px}
+.sources span{border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:15px;background:var(--paper)}
 
-.how{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.how{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:start}
 ol.steps{list-style:none;padding:0;margin:0;counter-reset:s}
 ol.steps li{counter-increment:s;padding:16px 0 16px 44px;position:relative;border-bottom:1px solid var(--line)}
 ol.steps li::before{content:counter(s);position:absolute;left:0;top:16px;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:13px;color:var(--mute)}
 ol.steps b{display:block;margin-bottom:2px}
 ol.steps span{color:var(--mute);font-size:15.5px}
 
-.ratings{display:grid;gap:14px}
-.rate{display:grid;grid-template-columns:36px 1fr;gap:14px;align-items:start;padding:18px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
+.ratings{display:grid;gap:16px}
+.rate{display:grid;grid-template-columns:36px minmax(0,1fr);gap:16px;align-items:start;padding:16px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
 .rate svg{width:28px;height:28px}
 .rate b{display:block}.rate span{color:var(--mute);font-size:15px}
 .limits{margin-top:20px;color:var(--mute);font-size:15px}
 
-.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:32px}
-.panel h3{font:400 32px/1.05 "Instrument Serif",serif;margin:0 0 10px}
-.panel p{color:var(--ink2);margin:0 0 18px}
-.price{font:400 64px/1 "Instrument Serif",serif;margin:8px 0 6px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.panel{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:32px}
+.panel h3{font:400 32px/1.05 "Instrument Serif",serif;margin:0 0 12px}
+.panel p{color:var(--ink2);margin:0 0 16px}
+.price{font:400 64px/1 "Instrument Serif",serif;margin:8px 0 8px}
 .price small{font:500 15px "Schibsted Grotesk",sans-serif;color:var(--mute)}
-.panel ul{margin:0 0 24px;padding-left:18px;color:var(--ink2)}
+.panel ul{margin:0 0 24px;padding-left:16px;color:var(--ink2)}
 .panel li{margin:4px 0}
 .badgerow{display:flex;align-items:center;gap:12px;margin:0 0 20px}
-.fine{font-size:13.5px;color:var(--mute);margin-top:14px}
+.fine{font-size:13.5px;color:var(--mute);margin-top:16px}
 
-.install{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+.install{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center}
 .install img{width:88px;height:88px}
-pre{background:var(--term);color:var(--term-ink);border-radius:12px;padding:18px 20px;overflow-x:auto;font-size:14.5px;line-height:1.8;margin:0}
+pre{background:var(--term);color:var(--term-ink);border-radius:12px;padding:16px 20px;overflow-x:auto;font-size:14.5px;line-height:1.8;margin:0}
 pre .m{color:var(--term-mute)}
 
 footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line)}
 
 @media (max-width:860px){
-  .hero,.how,.split{grid-template-columns:1fr;gap:36px}
+  .hero,.how,.split{grid-template-columns:minmax(0,1fr);gap:36px}
   .hero{padding:36px 0 64px}
-  .cmd{grid-template-columns:1fr;gap:6px}
+  .cmd{grid-template-columns:minmax(0,1fr);gap:8px}
   section{padding:64px 0}
   nav a:not(:last-child){display:none}
-  .install{grid-template-columns:1fr}
+  .install{grid-template-columns:minmax(0,1fr)}
   .term{font-size:12.5px;overflow-x:hidden}.term p{white-space:pre-wrap}
 }
 </style>
@@ -132,7 +133,7 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
 
 <div class="hero">
   <div>
-    <h1>Install the tool.<br><i>Not the trojan.</i></h1>
+    <h1>Install the tool.<br>Not the trojan.</h1>
     <p class="lede">A Claude Code plugin. Say what you need, and Vetted finds it, scans it for malware without running it, and installs the exact version it checked.</p>
     <div class="cta">
       <a class="btn primary" href="#install">Install the plugin</a>
@@ -140,14 +141,13 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
     </div>
   </div>
   <div class="term" role="img" aria-label="Example Vetted scan comparing three candidates">
-    <div class="bar"><i></i><i></i><i></i></div>
     <p class="line" style="animation-delay:.1s"><span class="m">›</span> /vetted:find self-hosted newsletter tool</p>
     <p class="line" style="animation-delay:.5s"><span class="m">  searching github, docker hub…  3 candidates</span></p>
     <p class="line" style="animation-delay:.9s"><span class="m">  scanning without running anything</span></p>
     <p class="line" style="animation-delay:1.3s"> </p>
-    <p class="line" style="animation-delay:1.5s"><span class="g">  CLEAN </span> knadh/listmonk        <span class="m">24k ★  AGPL</span></p>
-    <p class="line" style="animation-delay:1.8s"><span class="y">  REVIEW</span> mailer-kit/mk         <span class="m">postinstall hook</span></p>
-    <p class="line" style="animation-delay:2.1s"><span class="r">  BLOCK </span> listmonk-pro/listmonk  <span class="m">sends ~/.ssh to webhook</span></p>
+    <p class="line" style="animation-delay:1.5s"><span class="g">  clean  </span> knadh/listmonk        <span class="m">24k ★  AGPL</span></p>
+    <p class="line" style="animation-delay:1.8s"><span class="y">  review </span> mailer-kit/mk         <span class="m">postinstall hook</span></p>
+    <p class="line" style="animation-delay:2.1s"><span class="r">  block  </span> listmonk-pro/listmonk  <span class="m">sends ~/.ssh to webhook</span></p>
     <p class="line" style="animation-delay:2.5s"> </p>
     <p class="line" style="animation-delay:2.7s"><span class="m">  install listmonk@v5.1.0 (pinned)? </span>y</p>
   </div>
@@ -159,7 +159,7 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
   <div class="cmds">
     <div class="cmd"><code>/vetted:find</code><p>Describe what you need. You get 3 to 5 scanned options, one recommendation, and a pinned install once you say yes.</p></div>
     <div class="cmd"><code>/vetted:report</code><p>A one-screen fact sheet on one tool or many: author, the license in plain words, activity, contents, install command and safety rating.</p></div>
-    <div class="cmd"><code>/vetted:digest</code><p>What's new and worth it in the topics you care about. Run it weekly on a schedule.</p></div>
+    <div class="cmd"><code>/vetted:digest</code><p>What’s new and worth it in the topics you care about. Run it weekly on a schedule.</p></div>
     <div class="cmd"><code>/vetted:update</code><p>Updates what you installed, scans only what changed, and warns you about bad news: archived, deprecated, sold to a new owner, or shutting down.</p></div>
     <div class="cmd"><code>/vetted:uninstall</code><p>Removes a tool and what it left behind: config, containers, and data volumes (it asks first). Then tells you which keys to revoke.</p></div>
     <div class="cmd"><code>/vetted:share</code><p>Used something and it was fine, or not? Share the result so the next person is protected too. Opt-in and public.</p></div>
@@ -185,8 +185,8 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
 </section>
 
 <section id="limits">
-  <h2>What we catch, and what we can't.</h2>
-  <p class="sub">No scanner catches everything. Here's exactly where the line is, so you know what a rating means.</p>
+  <h2>What we catch, and what we can’t.</h2>
+  <p class="sub">No scanner catches everything. Here’s exactly where the line is, so you know what a rating means.</p>
   <div class="cancant">
     <div>
       <h3><svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="12" stroke="var(--ok)" stroke-width="2"/><path d="m9 14.5 3.3 3.3L19 11" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Catches</h3>
@@ -195,18 +195,18 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
         <li><b>Data theft</b><span>Code that reads SSH keys, browser passwords or crypto wallets, or sends data out through Discord or Telegram webhooks.</span></li>
         <li><b>Risky setups</b><span>Install-time scripts, shell access, bundled binaries, pickle model files, hidden instructions in MCP tools.</span></li>
         <li><b>Roblox backdoors</b><span>Remote require(id), loadstring, and scripts hidden deep inside models.</span></li>
-        <li><b>Bad trust signals</b><span>Brand-new accounts, a change of owner, typosquat names, packages that don't match their source, projects shutting down.</span></li>
+        <li><b>Bad trust signals</b><span>Brand-new accounts, a change of owner, typosquat names, packages that don’t match their source, projects shutting down.</span></li>
       </ul>
     </div>
     <div>
-      <h3><svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 3 26 24H2L14 3Z" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round"/><path d="M14 11v6M14 20.5v.5" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"/></svg>Can't fully catch yet</h3>
+      <h3><svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 3 26 24H2L14 3Z" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round"/><path d="M14 11v6M14 20.5v.5" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"/></svg>Harder cases, and how we narrow them</h3>
       <ul>
-        <li><b>Code that turns bad later</b><span>Payloads fetched days after install, or set to a date. We flag the download, not what it fetches later.</span></li>
-        <li><b>Scrambled code</b><span>Minified bundles and compiled programs we can't read are rated Unverified, never Clean.</span></li>
-        <li><b>Brand-new malware</b><span>Patterns and scanners only know what has been seen before.</span></li>
-        <li><b>Deep dependencies</b><span>Sub-packages are checked against known vulnerability lists, not read line by line.</span></li>
-        <li><b>Hosted services</b><span>Remote servers run code we can't see. We judge what access they ask for.</span></li>
-        <li><b>Honest bugs</b><span>Vetted looks for malice, not mistakes.</span></li>
+        <li><b>Code that turns bad later</b><span>We flag code that fetches and runs things, long timers and date triggers, and alert when an update gains new abilities. Still not proof against a patient attacker.</span></li>
+        <li><b>Scrambled code</b><span>Packed code is unpacked before scanning and binaries are checked by fingerprint. Whatever stays unreadable is rated Unverified, never Clean.</span></li>
+        <li><b>Brand-new malware</b><span>An optional sandbox installs npm and PyPI packages with the network cut off and reports what they try to do.</span></li>
+        <li><b>Deep dependencies</b><span>Every package in the full tree is checked against known-malware and vulnerability lists. Only the risky ones are read line by line.</span></li>
+        <li><b>Hosted services</b><span>Remote servers run code we can’t see. We judge what they ask for and warn when their tools change.</span></li>
+        <li><b>Honest bugs</b><span>A separate quality grade, A to F, from OpenSSF Scorecard. It’s a signal, not an audit.</span></li>
       </ul>
     </div>
   </div>
@@ -219,19 +219,21 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
       <ol class="steps">
         <li><b>Download, never run</b><span>Packages arrive as plain files. No install scripts, no builds, no Play mode in Studio.</span></li>
         <li><b>Pattern scan</b><span>Catches scripts downloaded and piped into a shell, hidden payloads, password and wallet theft, data sent out through webhooks, reverse shells, miners, Roblox require(id) backdoors and prompt injection in MCP tools.</span></li>
+        <li><b>Every dependency</b><span>The whole dependency tree, resolved without installing, checked against known-malware and vulnerability lists.</span></li>
         <li><b>Real malware scanners</b><span>Windows Defender, ClamAV, GuardDog, osv-scanner and modelscan, whichever you have installed.</span></li>
         <li><b>A careful read</b><span>Claude reads every flagged line and every entry point, then checks the author, ownership changes and typosquat names.</span></li>
-        <li><b>Pinned install</b><span>The exact commit, version, digest or asset ID that was scanned. Never "latest".</span></li>
+        <li><b>What it can do</b><span>A capability profile: network, running programs, files, secrets. A new one in an update is a warning.</span></li>
+        <li><b>Pinned install</b><span>The exact commit, version, digest or asset ID that was scanned. Never “latest”.</span></li>
       </ol>
     </div>
     <div>
       <div class="ratings">
         <div class="rate"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="12" stroke="var(--ok)" stroke-width="2"/><path d="m9 14.5 3.3 3.3L19 11" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Clean</b><span>A real malware scanner ran and the review found nothing.</span></div></div>
         <div class="rate"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 3 26 24H2L14 3Z" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round"/><path d="M14 11v6M14 20.5v.5" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"/></svg><div><b>Review</b><span>A real risk with a legitimate reason. It needs a second yes.</span></div></div>
-        <div class="rate"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="12" stroke="var(--un)" stroke-width="2" stroke-dasharray="3 3"/><path d="M11 11a3 3 0 1 1 4 2.8c-.6.3-1 .8-1 1.5V16M14 19.5v.5" stroke="var(--un)" stroke-width="2" stroke-linecap="round"/></svg><div><b>Unverified</b><span>No scanner ran, or the code couldn't be fully read. Treated like Review.</span></div></div>
+        <div class="rate"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="12" stroke="var(--un)" stroke-width="2" stroke-dasharray="3 3"/><path d="M11 11a3 3 0 1 1 4 2.8c-.6.3-1 .8-1 1.5V16M14 19.5v.5" stroke="var(--un)" stroke-width="2" stroke-linecap="round"/></svg><div><b>Unverified</b><span>No scanner ran, or the code couldn’t be fully read. Treated like Review.</span></div></div>
         <div class="rate"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="12" stroke="var(--bad)" stroke-width="2"/><path d="m6 22 16-16" stroke="var(--bad)" stroke-width="2" stroke-linecap="round"/></svg><div><b>Block</b><span>Steals data, hides code, or downloads and runs code. It never installs.</span></div></div>
       </div>
-      <p class="limits">Honest limits: Vetted lowers the risk; it can't rule it out. Well-hidden or time-delayed malware can get past any scanner. Install only what you need.</p>
+      <p class="limits">Honest limits: Vetted lowers the risk; it can’t rule it out. Well-hidden or time-delayed malware can get past any scanner. Install only what you need.</p>
     </div>
   </div>
 </section>
@@ -245,12 +247,12 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
       <div class="price">$5 <small>per repo, per version</small></div>
       <ul>
         <li>The full automated scan, plus a person reading the code</li>
-        <li>A written report in your repo's issues</li>
+        <li>A written report in your repo’s issues</li>
         <li>The Vetted badge, linked to a public record</li>
       </ul>
       <div class="badgerow"><img src="badge.svg" alt="Vetted reviewed badge" width="112" height="20"><span class="mono" style="font-size:13px;color:var(--mute)">for your README</span></div>
       <a class="btn primary" href="https://github.com/FYClamityDestiny/vetted/issues/new?template=review-request.yml">Request a review</a>
-      <p class="fine">A review covers the version reviewed, not later releases. It's a professional opinion, not a guarantee.</p>
+      <p class="fine">A review covers the version reviewed, not later releases. It’s a professional opinion, not a guarantee.</p>
     </div>
     <div class="panel">
       <h3>Shared ratings</h3>
@@ -277,7 +279,7 @@ claude plugin install vetted</pre>
   </div>
 </section>
 
-<footer><span>MIT licensed · made by FYClamityDestiny</span><a href="https://github.com/FYClamityDestiny/vetted">github.com/FYClamityDestiny/vetted</a></footer>
+<footer><span>MIT licensed. Built by <a href="https://github.com/FYClamityDestiny">FYClamityDestiny</a>.</span><a href="https://farhandev.net">farhandev.net</a></footer>
 </div>
 </body>
 </html>

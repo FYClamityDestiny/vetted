@@ -25,6 +25,12 @@ claude plugin marketplace add FYClamityDestiny/vetted
 claude plugin install vetted
 ```
 
+## Requirements
+
+- **Node 18+** (for `scripts/vetted.mjs`, which fetches and condenses registry data, cached for 24h)
+- **`gh`** signed in (recommended; without it GitHub allows 60 API requests an hour)
+- Optional: **Docker** for sandbox installs, **`VT_API_KEY`** (a free VirusTotal key; only file fingerprints are sent), and the scanners listed below
+
 ## Skills
 
 | Command | What it does |
@@ -46,6 +52,14 @@ claude plugin install vetted
 4. **Claude reads every flagged line and every entry point** (install scripts, main files, hooks, MCP tool descriptions), and checks trust signals: account age, whether the published package matches its source, recent ownership changes, typosquat names.
 5. **Rating:** ✅ Clean · ⚠️ Review · ❔ Unverified · ⛔ Block. ✅ is only possible if a real malware scanner ran. ⛔ never installs. ⚠️ and ❔ need a second yes.
 6. **Pinned install** of the exact commit, version, digest or asset ID that was scanned.
+
+**Newer checks:**
+- **Every dependency:** the full tree is resolved with deps.dev (nothing installed) and checked against OSV's known-malware (`MAL-`) and vulnerability lists.
+- **Capability profile:** what the code can do (network, running programs, files, secrets, install hooks). `update` warns when a new version gains one.
+- **Delayed payloads:** flags code that fetches and runs things, long timers and date triggers.
+- **Scrambled code:** minified or packed files are flagged and unpacked before review; binaries are fingerprinted.
+- **Sandbox (optional, Docker):** installs npm and PyPI packages with the network cut off and reports what they tried to do.
+- **Quality grade A–F** from OpenSSF Scorecard, kept separate from the safety rating.
 
 **Honest limits:** Vetted lowers the risk; it can't rule it out. Well-hidden or time-delayed malware can get past any scanner. Install a real malware scanner for best results, and only install what you need.
 
@@ -81,3 +95,5 @@ Scanning Vetted itself flags its own scanner and tests, because they contain the
 
 ## License
 MIT
+
+Built by [FYClamityDestiny](https://github.com/FYClamityDestiny) · [farhandev.net](https://farhandev.net)

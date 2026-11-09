@@ -21,7 +21,7 @@ Get the latest version and compare it with the installed one. Skip items that ar
 - **Security:** GitHub advisories (`gh api repos/<r>/security-advisories`), osv.dev for the package (`https://api.osv.dev/v1/query`).
 
 ## 4. Scan only what changed
-Download the old and new versions side by side (pinned, from `sources.md`). Diff them: `git diff <old>..<new>`, or `diff -r` on unpacked packages. Run `scan.sh` on the **new** version, then read every changed file that touches install scripts, entry points, network calls or hooks. Flag the classic hijack signs: a big new minified file, a new install script, a new dependency nobody asked for, or a patch release that adds network code.
+Run `intel` on the new version. Download the old and new versions side by side (pinned, from `sources.md`). Diff them: `git diff <old>..<new>`, or `diff -r` on unpacked packages. Run `scan.sh` on the **new** version, then read every changed file that touches install scripts, entry points, network calls or hooks. Flag the classic hijack signs: a big new minified file, a new install script, a new dependency nobody asked for, or a patch release that adds network code. Compare the new `CAPS:` line with the one in the log, and call out every new capability. For remote MCP servers, compare the tool-list hash and warn if the tools changed.
 
 ## 5. Report and apply
 Table: Name | Installed → Latest | Changes (one line) | Bad news | Rating. Then ask which to update. Apply only the approved ones, each pinned to the scanned version, and update `vetted-log.md` (new version, rating, date). Never auto-update a ⛔, and don't let an update quietly lower a rating without saying so.
