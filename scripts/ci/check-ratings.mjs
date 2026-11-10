@@ -76,6 +76,14 @@ if (!problems.length) for (const { file, source, name, version, r } of ratings) 
       let code = 0;
       try { execFileSync('bash', [SCAN, got.dir, source], { stdio: 'pipe' }); } catch (e) { code = e.status; }
       bot = { 0: 'clean', 1: 'review', 2: 'block', 3: 'unverified' }[code] ?? 'unverified';
+      // Behavior check: install it with the network cut off and watch what it does (GitHub runners have Docker).
+      if (source !== 'github') {
+        let sb = 0, out = '';
+        try { out = execFileSync('bash', [join(root, 'scripts', 'sandbox.sh'), source, source === 'npm' ? `${name}@${version}` : `${name}==${version}`], { encoding: 'utf8', timeout: 6e5 }); }
+        catch (e) { sb = e.status ?? 3; out = String(e.stdout || ''); }
+        if (sb === 1) { if (SEV[bot] < SEV.review) bot = 'review'; notes.push(`${file}: the sandbox saw suspicious behavior during install:\n\n\`\`\`\n${out.slice(-800)}\n\`\`\``); }
+        else if (sb === 0) notes.push(`${file}: the sandbox install showed nothing suspicious.`);
+      }
     }
     if (SEV[r.rating] < SEV[bot]) problems.push(`${file}: you rated it "${r.rating}" but the bot's own check says "${bot}". Ratings can't be less cautious than the bot.`);
     else notes.push(`${file}: the bot's check says "${bot}", consistent with your "${r.rating}".`);
