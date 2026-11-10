@@ -20,7 +20,7 @@ cleanup() { docker rm -f "$name" >/dev/null 2>&1; docker volume rm "$vol" >/dev/
 docker run --rm -v "$vol":/w --cap-drop ALL --security-opt no-new-privileges "$img" sh -c "$fetch" >/dev/null 2>&1 || { echo "SKIPPED: download step failed"; exit 3; }
 # step 2: no network, no extra privileges, capped resources
 log=$(docker run --name "$name" -v "$vol":/w --network none --cap-drop ALL --security-opt no-new-privileges --memory 1g --pids-limit 256 "$img" sh -c "$run" 2>&1)
-changes=$(docker diff "$name" 2>/dev/null | grep -vE ' /(w|tmp|root/\.npm|root/\.cache|usr/local/lib/python3[^/]*/site-packages|usr/local/bin)' | head -20)
+changes=$(docker diff "$name" 2>/dev/null | grep -E '^[AD] ' | grep -vE ' /(w|tmp|root/\.npm|root/\.cache|root/\.config|usr/local/lib/python3[^/]*/site-packages|usr/local/bin)(/|$)' | grep -vE '\.pyc$|/__pycache__$' | head -20)  # A=added, D=deleted; C lines are just parent folders
 sus=0
 echo "$log" | grep -iE 'ENOTFOUND|EAI_AGAIN|getaddrinfo|Network is unreachable|Temporary failure in name resolution|ECONNREFUSED' | grep -viE 'registry|pypi|files.pythonhosted' | head -5 | sed 's/^/[network attempt] /' | grep . && sus=1
 [ -n "$changes" ] && { echo "[files changed outside the package folder]"; echo "$changes" | sed 's/^/    /'; sus=1; }

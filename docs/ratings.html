@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vetted ratings</title>
+<meta name="description" content="Public safety ratings for open-source packages, repos and extensions, checked by the Vetted bot.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · redesign: polish · genre: modern-minimal · theme: own world (user named: keep paper, ink, green; Instrument Serif + Schibsted Grotesk) · posture: restrained · nav: wordmark + back link · footer: license line + farhandev.net · hero: headline left, search under it · signature: the live ratings list */
+/* critique: a lookup tool; the search box and the rating chips do the work */
+:root{
+  --bg:#f4f1ea;--paper:#fbf9f4;--ink:#16140f;--ink2:#3d392f;--mute:#6b6658;--line:#dcd6c8;
+  --ok:#1a6e45;--warn:#9a5b00;--bad:#a8231b;--un:#5f5a4e;--sel:#cfe9da;
+  --sans:"Schibsted Grotesk",system-ui,sans-serif;--serif:"Instrument Serif",serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#11100e;--paper:#191815;--ink:#efece4;--ink2:#cfcabd;--mute:#9a958a;--line:#2d2b26;
+  --ok:#5fd19b;--warn:#f2b35a;--bad:#ff7a6e;--un:#a7a294;--sel:#21473a;
+}}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+::selection{background:var(--sel);color:var(--ink)}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--ok);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:24px 0}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:18px;text-decoration:none}
+.brand img{width:30px;height:30px}
+header nav a{color:var(--mute);text-decoration:none;font-size:15px}
+header nav a:hover{color:var(--ink)}
+h1{font:400 clamp(44px,6.4vw,76px)/1 var(--serif);letter-spacing:-.02em;margin:48px 0 16px;overflow-wrap:break-word;min-width:0}
+.sub{color:var(--ink2);max-width:58ch;margin:0 0 32px}
+.controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;margin-bottom:24px}
+input,select{font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+input:hover,select:hover{border-color:var(--mute)}
+input:focus-visible,select:focus-visible{outline:2px solid var(--ok);outline-offset:1px}
+.count{color:var(--mute);font-size:15px;margin:0 0 8px}
+.list{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.row b{font-weight:600;overflow-wrap:anywhere}
+.row .meta{display:block;color:var(--mute);font-size:15px}
+.tag{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;padding:4px 12px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.clean{color:var(--ok)}.review{color:var(--warn)}.unverified{color:var(--un)}.block{color:var(--bad)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.badges span{font-size:14px;color:var(--ink2);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:0 8px}
+.empty{padding:48px 0;color:var(--ink2);max-width:58ch}
+.empty h2{font:400 32px/1.1 var(--serif);margin:0 0 8px;color:var(--ink)}
+.empty code{font-family:var(--mono);font-size:15px}
+footer{margin-top:72px;padding:40px 0 56px;color:var(--mute);font-size:15px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line)}
+@media (max-width:640px){.controls{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="./"><img src="icon.svg" alt="">Vetted</a>
+  <nav><a href="./">Back to the plugin</a></nav>
+</header>
+
+<main>
+  <h1>Ratings</h1>
+  <p class="sub">Every rating here was re-checked by the Vetted bot against the exact version. When people disagree, the most cautious rating wins.</p>
+
+  <div class="controls">
+    <label><span class="visually-hidden" hidden>Search</span><input id="q" type="search" placeholder="Search a package, repo or extension" aria-label="Search ratings" autocomplete="off"></label>
+    <select id="src" aria-label="Filter by source">
+      <option value="">All sources</option><option>github</option><option>npm</option><option>pypi</option><option>hf</option><option>docker</option><option>openvsx</option><option>mcp</option><option>roblox</option>
+    </select>
+    <select id="rate" aria-label="Filter by rating">
+      <option value="">Any rating</option><option value="clean">Clean</option><option value="review">Review</option><option value="unverified">Unverified</option><option value="block">Block</option>
+    </select>
+  </div>
+  <p class="count" id="count" aria-live="polite">Loading ratings…</p>
+  <div class="list" id="list"></div>
+  <noscript><p class="empty">This page needs JavaScript to load the list. The raw data is at <a href="ratings.json">ratings.json</a>.</p></noscript>
+</main>
+
+<footer><span>MIT licensed. Built by <a href="https://github.com/FYClamityDestiny">FYClamityDestiny</a>.</span><span><a href="https://farhandev.net">farhandev.net</a> &nbsp; <a href="mailto:farhandev.business@gmail.com">farhandev.business@gmail.com</a></span></footer>
+</div>
+<script>
+const LABEL = { clean: 'Clean', review: 'Review', unverified: 'Unverified', block: 'Block' };
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let items = [];
+function render() {
+  const q = $('q').value.trim().toLowerCase(), src = $('src').value, rate = $('rate').value;
+  const shown = items.filter(i => (!q || i.name.toLowerCase().includes(q)) && (!src || i.source === src) && (!rate || i.rating === rate));
+  $('count').textContent = items.length ? `${shown.length} of ${items.length} rated versions` : '';
+  if (!items.length) {
+    $('list').innerHTML = `<div class="empty"><h2>No ratings yet.</h2><p>The list fills as people share results. Scan something with <code>/vetted:find</code> or <code>/vetted:report</code>, then run <code>/vetted:share</code> to add it.</p></div>`;
+    return;
+  }
+  if (!shown.length) { $('list').innerHTML = `<div class="empty"><h2>Nothing matches.</h2><p>Try another name, or clear the filters.</p></div>`; return; }
+  $('list').innerHTML = shown.map(i => `<div class="row"><div><b>${esc(i.name)}</b> <span class="meta">${esc(i.source)}, version ${esc(i.version)}. ${i.submitters} ${i.submitters === 1 ? 'rating' : 'ratings'}, last on ${esc(i.updated || 'unknown')}</span>
+    <div class="badges">${i.human_reviewed ? '<span>Human reviewed</span>' : ''}${i.community ? '<span>Community: 3+ accounts</span>' : ''}</div></div>
+    <span class="tag ${esc(i.rating)}">${LABEL[i.rating] || esc(i.rating)}</span></div>`).join('');
+}
+['q', 'src', 'rate'].forEach(id => $(id).addEventListener('input', render));
+fetch('ratings.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : { items: [] }).catch(() => ({ items: [] }))
+  .then(d => { items = d.items || []; render(); });
+</script>
+</body>
+</html>

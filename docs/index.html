@@ -128,7 +128,7 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
 <div class="wrap">
 <header>
   <a class="brand" href="#"><img src="icon.svg" alt="">Vetted</a>
-  <nav><a href="#how">How it works</a><a href="#review">Human review</a><a href="https://github.com/FYClamityDestiny/vetted">GitHub</a></nav>
+  <nav><a href="#how">How it works</a><a href="ratings.html">Ratings</a><a href="https://github.com/FYClamityDestiny/vetted">GitHub</a></nav>
 </header>
 
 <div class="hero">
@@ -185,31 +185,16 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
 </section>
 
 <section id="limits">
-  <h2>What we catch, and what we can’t.</h2>
-  <p class="sub">No scanner catches everything. Here’s exactly where the line is, so you know what a rating means.</p>
-  <div class="cancant">
-    <div>
-      <h3><svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="12" stroke="var(--ok)" stroke-width="2"/><path d="m9 14.5 3.3 3.3L19 11" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Catches</h3>
-      <ul>
-        <li><b>Classic malware tricks</b><span>Downloaded scripts piped into a shell, hidden payloads, reverse shells, miners, startup persistence, antivirus being switched off.</span></li>
-        <li><b>Data theft</b><span>Code that reads SSH keys, browser passwords or crypto wallets, or sends data out through Discord or Telegram webhooks.</span></li>
-        <li><b>Risky setups</b><span>Install-time scripts, shell access, bundled binaries, pickle model files, hidden instructions in MCP tools.</span></li>
-        <li><b>Roblox backdoors</b><span>Remote require(id), loadstring, and scripts hidden deep inside models.</span></li>
-        <li><b>Bad trust signals</b><span>Brand-new accounts, a change of owner, typosquat names, packages that don’t match their source, projects shutting down.</span></li>
-      </ul>
-    </div>
-    <div>
-      <h3><svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M14 3 26 24H2L14 3Z" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round"/><path d="M14 11v6M14 20.5v.5" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"/></svg>Harder cases, and how we narrow them</h3>
-      <ul>
-        <li><b>Code that turns bad later</b><span>We flag code that fetches and runs things, long timers and date triggers, and alert when an update gains new abilities. Still not proof against a patient attacker.</span></li>
-        <li><b>Scrambled code</b><span>Packed code is unpacked before scanning and binaries are checked by fingerprint. Whatever stays unreadable is rated Unverified, never Clean.</span></li>
-        <li><b>Brand-new malware</b><span>An optional sandbox installs npm and PyPI packages with the network cut off and reports what they try to do.</span></li>
-        <li><b>Deep dependencies</b><span>Every package in the full tree is checked against known-malware and vulnerability lists. Only the risky ones are read line by line.</span></li>
-        <li><b>Hosted services</b><span>Remote servers run code we can’t see. We judge what they ask for and warn when their tools change.</span></li>
-        <li><b>Honest bugs</b><span>A separate quality grade, A to F, from OpenSSF Scorecard. It’s a signal, not an audit.</span></li>
-      </ul>
-    </div>
-  </div>
+  <h2>What we catch.</h2>
+  <p class="sub">The patterns behind most real supply-chain attacks, checked on every scan.</p>
+  <ul class="catches">
+    <li><b>Classic malware tricks</b><span>Downloaded scripts piped into a shell, hidden payloads, reverse shells, miners, startup persistence, antivirus being switched off.</span></li>
+    <li><b>Data theft</b><span>Code that reads SSH keys, browser passwords or crypto wallets, or sends data out through Discord or Telegram webhooks.</span></li>
+    <li><b>Risky setups</b><span>Install-time scripts, shell access, bundled binaries, pickle model files, hidden instructions in MCP tools.</span></li>
+    <li><b>Roblox backdoors</b><span>Remote require(id), loadstring, and scripts hidden deep inside models.</span></li>
+    <li><b>Bad trust signals</b><span>Brand-new accounts, a change of owner, typosquat names, packages that don’t match their source, projects shutting down.</span></li>
+    <li><b>Known malware anywhere in the tree</b><span>The package and every dependency, checked against public malware and vulnerability lists.</span></li>
+  </ul>
 </section>
 
 <section id="how">
@@ -244,14 +229,14 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
   <div class="split">
     <div class="panel">
       <h3>Human review</h3>
-      <div class="price">$5 <small>per repo, per version</small></div>
+      <div class="price">$5 <small>per repo, per version. Coming soon.</small></div>
       <ul>
         <li>The full automated scan, plus a person reading the code</li>
         <li>A written report in your repo’s issues</li>
         <li>The Vetted badge, linked to a public record</li>
       </ul>
       <div class="badgerow"><img src="badge.svg" alt="Vetted reviewed badge" width="112" height="20"><span class="mono" style="font-size:13px;color:var(--mute)">for your README</span></div>
-      <a class="btn primary" href="https://github.com/FYClamityDestiny/vetted/issues/new?template=review-request.yml">Request a review</a>
+      <span class="soon" aria-disabled="true">Coming soon</span>
       <p class="fine">A review covers the version reviewed, not later releases. It’s a professional opinion, not a guarantee.</p>
     </div>
     <div class="panel">
@@ -262,7 +247,7 @@ footer{padding:40px 0 56px;color:var(--mute);font-size:14.5px;display:flex;justi
         <li>Pinned to an exact version or commit</li>
         <li>A hint only: a shared rating can lower your local rating, never raise it</li>
       </ul>
-      <a class="btn ghost" href="https://github.com/FYClamityDestiny/vetted/tree/main/ratings">Browse ratings</a>
+      <a class="btn ghost" href="ratings.html">Browse ratings</a>
     </div>
   </div>
 </section>

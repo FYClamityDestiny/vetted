@@ -2,7 +2,7 @@
 
 <h1 align="center">Vetted</h1>
 
-<p align="center"><a href="https://fyclamitydestiny.github.io/vetted/">Website</a> · <a href="https://github.com/FYClamityDestiny/vetted/issues/new?template=review-request.yml">Request a human review ($5)</a></p>
+<p align="center"><a href="https://fyclamitydestiny.github.io/vetted/">Website</a> · <a href="https://fyclamitydestiny.github.io/vetted/ratings.html">Browse ratings</a></p>
 
 **Find open-source tools and check them for malware before you install.** A Claude Code plugin.
 
@@ -65,11 +65,11 @@ claude plugin install vetted
 
 ## Human review and badge
 
-For $5 per version, a person reviews your repo and you get the badge, linked to a public record in `ratings/`:
+Coming soon: for $5 per version, a person reviews your repo and you get the badge, linked to a public record in `ratings/`:
 
 ![Vetted reviewed](docs/badge.svg)
 
-[Request a review](https://github.com/FYClamityDestiny/vetted/issues/new?template=review-request.yml). A review covers one version and is an opinion, not a guarantee.
+Coming soon. A review will cover one version and is an opinion, not a guarantee.
 
 ## Shared ratings
 
