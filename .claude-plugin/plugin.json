@@ -17,5 +17,11 @@
     "docker",
     "mcp",
     "roblox"
-  ]
+  ],
+  "homepage": "https://fyclamitydestiny.github.io/vetted/",
+  "repository": "https://github.com/FYClamityDestiny/vetted",
+  "documentationUrl": "https://github.com/FYClamityDestiny/vetted#readme",
+  "supportUrl": "https://github.com/FYClamityDestiny/vetted/issues",
+  "privacyPolicyUrl": "https://fyclamitydestiny.github.io/vetted/privacy.html",
+  "termsOfServiceUrl": "https://github.com/FYClamityDestiny/vetted/blob/main/LICENSE"
 }
