@@ -4,5 +4,19 @@
   "description": "Find, vet and install open-source tools from GitHub, Hugging Face, npm, PyPI, Docker Hub, VS Code/Open VSX, MCP registries and the Roblox Creator Store. Malware scan before anything is installed.",
   "author": { "name": "FYClamityDestiny", "url": "https://farhandev.net", "email": "farhandev.business@gmail.com" },
   "license": "MIT",
-  "keywords": ["security", "supply-chain", "github", "npm", "pypi", "docker", "mcp", "roblox"]
+  "keywords": ["security", "supply-chain", "github", "npm", "pypi", "docker", "mcp", "roblox"],
+  "userConfig": {
+    "github_token": {
+      "type": "string",
+      "title": "GitHub token (optional)",
+      "description": "Raises the GitHub API limit from 60 to 5000 requests an hour. A fine-grained token with no permissions is enough.",
+      "sensitive": true
+    },
+    "vt_api_key": {
+      "type": "string",
+      "title": "VirusTotal API key (optional)",
+      "description": "Free VirusTotal key. Only file hashes are looked up, never file contents.",
+      "sensitive": true
+    }
+  }
 }

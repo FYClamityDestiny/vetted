@@ -28,8 +28,8 @@ claude plugin install vetted
 ## Requirements
 
 - **Node 18+** (for `scripts/vetted.mjs`, which fetches and condenses registry data, cached for 24h)
-- **`gh`** signed in (recommended; without it GitHub allows 60 API requests an hour)
-- Optional: **Docker** for sandbox installs, **`VT_API_KEY`** (a free VirusTotal key; only file fingerprints are sent), and the scanners listed below
+- Optional: a GitHub token in the plugin options (without one GitHub allows 60 API requests an hour)
+- Optional: **Docker** for sandbox installs, a free VirusTotal key in the plugin options (only file fingerprints are sent), and the scanners listed below
 
 ## Skills
 

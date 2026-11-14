@@ -8,7 +8,7 @@ Scripts do the mechanical work and return short summaries, so you read about 20 
 - `$H search <github|npm|hf|docker|openvsx|mcp> "<query>" 10`: candidates
 - `$H meta <source> <name>`: pinned version, download URL, owner, flags (deprecated, install scripts, maintainer change, provenance)
 - `$H intel <source> <name> <version>`: known-malicious check on the package **and every dependency in its full tree**, known vulnerabilities, and the OpenSSF quality grade
-- `$H hashes <dir>`: fingerprints of binaries, checked against VirusTotal if `VT_API_KEY` is set
+- `$H hashes <dir>`: fingerprints of binaries, checked against VirusTotal if a VirusTotal key is set in the plugin options
 - When checking several items, hand each one to a subagent on the cheapest model, then rate the findings yourself.
 - Only read code deeply where steps 3-4 below point. Don't read whole repos.
 

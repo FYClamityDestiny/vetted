@@ -6,7 +6,7 @@
 //   node vetted.mjs meta   <source> <name>            pinned version, download URL, owner, flags
 //   node vetted.mjs intel  <source> <name> <version>  malware lists, vulns, full dependency tree, quality grade
 //   node vetted.mjs fetch  <github|npm|pypi> <name> <version|commit> <dir>   download pinned files, verify checksum, extract. Runs nothing.
-//   node vetted.mjs hashes <dir>                      sha256 of binaries/archives (+ VirusTotal if VT_API_KEY set)
+//   node vetted.mjs hashes <dir>                      sha256 of binaries/archives (+ VirusTotal if the VirusTotal key is set)
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync, statSync, readdirSync, existsSync } from 'node:fs';
@@ -19,8 +19,8 @@ const enc = encodeURIComponent;
 const short = (s, n = 110) => (s || '').replace(/\s+/g, ' ').slice(0, n);
 const daysAgo = d => (d ? Math.round((Date.now() - new Date(d)) / DAY) : null);
 
-let ghToken = process.env.GITHUB_TOKEN;
-if (!ghToken) try { ghToken = execFileSync('gh', ['auth', 'token'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); } catch {}
+// Optional token comes from the plugin's sensitive userConfig (hooks/hooks.json); nothing is read from the machine.
+const ghToken = process.env.VETTED_GITHUB_TOKEN;
 
 async function get(url, opts = {}) {
   const key = createHash('sha1').update(url + (opts.body || '')).digest('hex');
@@ -161,18 +161,18 @@ async function hashes(dir) {
   for (const f of found.slice(0, 50)) {
     const sha = createHash('sha256').update(readFileSync(f)).digest('hex');
     const row = { file: f.slice(dir.length + 1), sha256: sha };
-    if (process.env.VT_API_KEY) {
+    if (process.env.VETTED_VT_API_KEY) {
       const url = `https://www.virustotal.com/api/v3/files/${sha}`;
       const cached = existsSync(join(CACHE, createHash('sha1').update(url).digest('hex') + '.json'));
       if (!cached && live >= max) { skipped++; row.virustotal = 'not checked (quota limit this run)'; out.push(row); continue; }
       if (!cached && live++) await new Promise(r => setTimeout(r, 15000));
-      const r = await get(url, { ttl: 7 * DAY, headers: { 'x-apikey': process.env.VT_API_KEY } }).catch(e => (/429/.test(e.message) ? 'quota' : null));
+      const r = await get(url, { ttl: 7 * DAY, headers: { 'x-apikey': process.env.VETTED_VT_API_KEY } }).catch(e => (/429/.test(e.message) ? 'quota' : null));
       const s = r?.data?.attributes?.last_analysis_stats;
       row.virustotal = r === 'quota' ? 'not checked (VirusTotal quota reached)' : s ? `${s.malicious} malicious / ${s.malicious + s.undetected + s.harmless} engines` : 'unknown to VirusTotal (new or private file)';
     }
     out.push(row);
   }
-  return { binaries: out.length, files: out, virustotal: process.env.VT_API_KEY ? `checked ${live} live${skipped ? `, ${skipped} skipped for quota (raise VT_MAX if your plan allows)` : ''}` : 'skipped (set VT_API_KEY, free account; only hashes are sent)' };
+  return { binaries: out.length, files: out, virustotal: process.env.VETTED_VT_API_KEY ? `checked ${live} live${skipped ? `, ${skipped} skipped for quota (raise VT_MAX if your plan allows)` : ''}` : 'skipped (set the VirusTotal key in plugin options, free account; only hashes are sent)' };
 }
 
 
