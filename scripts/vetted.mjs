@@ -6,7 +6,7 @@
 //   node vetted.mjs meta   <source> <name>            pinned version, download URL, owner, flags
 //   node vetted.mjs intel  <source> <name> <version>  malware lists, vulns, full dependency tree, quality grade
 //   node vetted.mjs fetch  <github|npm|pypi> <name> <version|commit> <dir>   download pinned files, verify checksum, extract. Runs nothing.
-//   node vetted.mjs hashes <dir>                      sha256 of binaries/archives (+ VirusTotal if the VirusTotal key is set)
+//   node vetted.mjs hashes <dir>                      sha256 of binaries/archives 
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync, statSync, readdirSync, existsSync } from 'node:fs';
@@ -19,15 +19,12 @@ const enc = encodeURIComponent;
 const short = (s, n = 110) => (s || '').replace(/\s+/g, ' ').slice(0, n);
 const daysAgo = d => (d ? Math.round((Date.now() - new Date(d)) / DAY) : null);
 
-// Optional token comes from the plugin's sensitive userConfig (hooks/hooks.json); nothing is read from the machine.
-const ghToken = process.env.VETTED_GITHUB_TOKEN;
 
 async function get(url, opts = {}) {
   const key = createHash('sha1').update(url + (opts.body || '')).digest('hex');
   const file = join(CACHE, key + '.json');
   try { if (Date.now() - statSync(file).mtimeMs < (opts.ttl ?? DAY)) return JSON.parse(readFileSync(file, 'utf8')); } catch {}
   const headers = { 'user-agent': 'vetted-plugin', accept: 'application/json', ...(opts.headers || {}) };
-  if (url.startsWith('https://api.github.com') && ghToken) headers.authorization = `Bearer ${ghToken}`;
   const res = await fetch(url, { ...opts, headers });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`${res.status} ${url}`);
@@ -152,27 +149,10 @@ async function hashes(dir) {
   const found = [];
   const walk = d => readdirSync(d, { withFileTypes: true }).forEach(e => { const p = join(d, e.name); if (e.isDirectory()) { if (e.name !== '.git') walk(p); } else if (BIN.has(extname(e.name).toLowerCase())) found.push(p); });
   walk(dir);
-  // VirusTotal free tier: 4 lookups/min, 500/day. Results cached 7 days; at most VT_MAX (default 4) live lookups per run,
-  // spaced 15s apart, biggest files first (installers and native modules matter most).
-  const max = +(process.env.VT_MAX || 4);
+  // Hash only: no API keys are read. The agent can look hashes up on VirusTotal/MalwareBazaar by hand if it wants.
   found.sort((x, y) => statSync(y).size - statSync(x).size);
-  const out = [];
-  let live = 0, skipped = 0;
-  for (const f of found.slice(0, 50)) {
-    const sha = createHash('sha256').update(readFileSync(f)).digest('hex');
-    const row = { file: f.slice(dir.length + 1), sha256: sha };
-    if (process.env.VETTED_VT_API_KEY) {
-      const url = `https://www.virustotal.com/api/v3/files/${sha}`;
-      const cached = existsSync(join(CACHE, createHash('sha1').update(url).digest('hex') + '.json'));
-      if (!cached && live >= max) { skipped++; row.virustotal = 'not checked (quota limit this run)'; out.push(row); continue; }
-      if (!cached && live++) await new Promise(r => setTimeout(r, 15000));
-      const r = await get(url, { ttl: 7 * DAY, headers: { 'x-apikey': process.env.VETTED_VT_API_KEY } }).catch(e => (/429/.test(e.message) ? 'quota' : null));
-      const s = r?.data?.attributes?.last_analysis_stats;
-      row.virustotal = r === 'quota' ? 'not checked (VirusTotal quota reached)' : s ? `${s.malicious} malicious / ${s.malicious + s.undetected + s.harmless} engines` : 'unknown to VirusTotal (new or private file)';
-    }
-    out.push(row);
-  }
-  return { binaries: out.length, files: out, virustotal: process.env.VETTED_VT_API_KEY ? `checked ${live} live${skipped ? `, ${skipped} skipped for quota (raise VT_MAX if your plan allows)` : ''}` : 'skipped (set the VirusTotal key in plugin options, free account; only hashes are sent)' };
+  const out = found.slice(0, 50).map(f => ({ file: f.slice(dir.length + 1), sha256: createHash('sha256').update(readFileSync(f)).digest('hex') }));
+  return { binaries: out.length, files: out, note: 'sha256 only; check unknown binaries at virustotal.com/gui/file/<sha256>' };
 }
 
 

@@ -18,7 +18,7 @@ Get the latest version and compare it with the installed one. Skip items that ar
 - **Shutting down:** search the README, the latest release notes and the 10 newest issues for: sunset, end of life, EOL, shutting down, no longer maintained, unmaintained, discontinued, moving to, acquired.
 - **Ownership change:** a new repo owner or redirect, new npm/PyPI maintainers, or a different publisher since the logged install. This is the classic hijack setup.
 - **License change:** compare the SPDX ID with the logged one (for example MIT changing to a non-commercial license).
-- **Security:** GitHub advisories (`gh api repos/<r>/security-advisories`), osv.dev for the package (`https://api.osv.dev/v1/query`).
+- **Security:** advisories and malicious-package listings, from the `intel` output.
 
 ## 4. Scan only what changed
 Run `intel` on the new version. Download the old and new versions side by side (pinned, from `sources.md`). Diff them: `git diff <old>..<new>`, or `diff -r` on unpacked packages. Run `scan.sh` on the **new** version, then read every changed file that touches install scripts, entry points, network calls or hooks. Flag the classic hijack signs: a big new minified file, a new install script, a new dependency nobody asked for, or a patch release that adds network code. Compare the new `CAPS:` line with the one in the log, and call out every new capability. For remote MCP servers, compare the tool-list hash and warn if the tools changed.
