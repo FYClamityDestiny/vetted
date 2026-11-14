@@ -28,7 +28,6 @@ claude plugin install vetted
 ## Requirements
 
 - **Node 18+** (for `scripts/vetted.mjs`, which fetches and condenses registry data, cached for 24h)
-- Optional: a GitHub token in the plugin options (without one GitHub allows 60 API requests an hour)
 - Optional: **Docker** for sandbox installs, and the scanners listed below
 
 ## Skills
